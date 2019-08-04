@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Monster Slayer</title>
+    <script src="https://npmcdn.com/vue/dist/vue.js"></script>
+    <link rel="stylesheet" href="./foundation.min.css">
+    <link rel="stylesheet" href="./app.css">
+</head>
+<body>
+<div id="app">
+    <section class="row">
+        <div class="small-6 columns">
+            <h1 class="text-center">YOU</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" :style="playerHelth">
+                  <p style="padding-top:8px; padding-left:50px;">{{ player_helthbar }}</p>
+                </div>
+            </div>
+        </div>
+        <div class="small-6 columns">
+            <h1 class="text-center">MONSTER</h1>
+            <div class="healthbar">
+                <div class="healthbar text-center" :style="monsterHelth">
+                  <p style="padding-top:8px; padding-left:50px;">{{ monster_helthbar }}</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <section class="row controls" v-if = "!show">
+        <div class="small-12 columns">
+            <button id="start-game" @click = "start">START NEW GAME</button>
+        </div>
+    </section>
+    <section class="row controls" v-if = "show">
+        <div class="small-12 columns">
+            <button id="attack" @click = "attack" v-if = "show">ATTACK</button>
+            <button id="special-attack" @click = "specialAttack" v-if = "show">SPECIAL ATTACK</button>
+            <button id="heal" @click = "heal" v-if = "show">HEAL</button>
+            <button id="give-up" @click = "show = !show" v-if = "show">GIVE UP</button>
+        </div>
+    </section>
+    <section class="row log">
+        <div class="small-12 columns">
+            <ul>
+              <template  v-for="item in logs">
+                <li v-html="item"></li>
+              </template>
+            </ul>
+        </div>
+    </section>
+</div>
+
+
+<script type="text/javascript">
+  new Vue({
+    el : app,
+    data : {
+      player_helthbar : 100,
+      monster_helthbar : 100,
+      title : "hi",
+      logs : [],
+      show : true,
+    },
+    computed:{
+      playerHelth : function() {
+        return {
+          'background-color': 'green',
+          margin: 0,
+          color: 'white',
+          width : this.player_helthbar.toString() + '%',
+        };
+      },
+      monsterHelth : function() {
+        return {
+          'background-color': 'green',
+          margin: 0,
+          color: 'white',
+          width : this.monster_helthbar.toString() + '%',
+        };
+      },
+    },
+    methods:{
+      attack : function() {
+        this.player_helthbar -= 20;
+        this.monster_helthbar -= 22;
+        this.logs.unshift(this.getHtml("background-color:green","you attacked 20"));
+        this.logs.unshift(this.getHtml("background-color:red","monster attacked 22"));
+        this.checkStatus();
+      },
+      specialAttack : function() {
+        var playerAttack = Math.floor(Math.random() * 20) + 15;
+        this.player_helthbar -= playerAttack;
+        this.monster_helthbar -= 28;
+        this.logs.unshift(this.getHtml("background-color:green",`you attacked ${playerAttack}`));
+        this.logs.unshift(this.getHtml("background-color:red","monster attacked 28"));
+        this.checkStatus();
+      },
+      heal : function() {
+        if(this.player_helthbar < 100){
+          var healed = (4 - Math.floor(Math.random() * 10));
+          this.player_helthbar += healed;
+          this.logs.unshift(this.getHtml("background-color:green", `you healed yourself by ${healed}`));
+        }
+        this.checkStatus();
+      },
+      start : function() {
+        this.player_helthbar = 100;
+        this.monster_helthbar = 100;
+        this.logs = [];
+        this.show = true;
+      },
+      getHtml : function(style, text) {
+        return `<div style=${style}><p style="text-color:black">${text}</p></div>`;
+      },
+      checkStatus : function() {
+        if(this.player_helthbar > this.monster_helthbar){
+          if(this.monster_helthbar <= 0){
+            alert("you won");
+            this.show = false;
+          }
+        }
+        else{
+          if(this.monster_helthbar < 0){
+            alert("you lost");
+            this.show = false;
+          }
+        }
+      },
+    }
+
+  })
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</body>
+</html>
